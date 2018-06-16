@@ -10,7 +10,7 @@ const filename = 'structurizr-' + workspaceId + '-';
   await page.goto('https://structurizr.com/share/' + workspaceId);
 
   const views = await page.evaluate(() => {
-    return Structurizr.scripting.getViews();
+    return structurizr.scripting.getViews();
   });
 
   for (var i = 0; i < views.length; i++) {
@@ -21,11 +21,11 @@ const filename = 'structurizr-' + workspaceId + '-';
     }, view);
 
     var base64DataForDiagram = await page.evaluate(() => {
-      return Structurizr.scripting.exportCurrentDiagramToPNG();
+      return structurizr.scripting.exportCurrentDiagramToPNG();
     });
   
     var base64DataForKey = await page.evaluate(() => {
-      return Structurizr.scripting.exportCurrentDiagramKeyToPNG();
+      return structurizr.scripting.exportCurrentDiagramKeyToPNG();
     });
   
     fs.writeFile(filename + view.key + '.png', base64DataForDiagram.replace(/^data:image\/png;base64,/, ""), 'base64', function (err) {

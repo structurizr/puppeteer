@@ -11,11 +11,11 @@ const filename = 'structurizr-' + workspaceId + '-' + diagramKey;
   await page.goto('https://structurizr.com/share/' + workspaceId + '#' + diagramKey);
 
   const base64DataForDiagram = await page.evaluate(() => {
-    return Structurizr.scripting.exportCurrentDiagramToPNG();
+    return structurizr.scripting.exportCurrentDiagramToPNG();
   });
 
   const base64DataForKey = await page.evaluate(() => {
-    return Structurizr.scripting.exportCurrentDiagramKeyToPNG();
+    return structurizr.scripting.exportCurrentDiagramKeyToPNG();
   });
 
   fs.writeFile(filename + '.png', base64DataForDiagram.replace(/^data:image\/png;base64,/, ""), 'base64', function (err) {
