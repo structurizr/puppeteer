@@ -17,7 +17,7 @@ const filename = 'structurizr-' + workspaceId + '-';
     var view = views[i];  
 
     await page.evaluate((view) => {
-      Structurizr.scripting.changeView(view);
+      structurizr.scripting.changeView(view);
     }, view);
 
     var base64DataForDiagram = await page.evaluate(() => {

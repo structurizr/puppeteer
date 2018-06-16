@@ -2,7 +2,7 @@ const puppeteer = require('puppeteer');
 const fs = require('fs');
 
 const workspaceId = 1;
-const diagramKey = 'liveDeployment';
+const diagramKey = 'components';
 const filename = 'structurizr-' + workspaceId + '-' + diagramKey;
 
 (async () => {

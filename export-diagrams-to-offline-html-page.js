@@ -17,6 +17,6 @@ const filename = 'structurizr-' + workspaceId + '-diagrams.html';
   });
     
   await page.evaluate(() => {
-    structurizr.scripting.exportDiagramsToOfflineHtmlPage(function(html) { console.log(html); });
+    structurizr.scripting.exportDiagramsToOfflineHTMLPage(function(html) { console.log(html); });
   });
 })();
