@@ -5,7 +5,7 @@ const workspaceId = 1;
 const filename = 'structurizr-' + workspaceId + '-';
 
 (async () => {
-  const browser = await puppeteer.launch({ignoreHTTPSErrors: true, headless: false});
+  const browser = await puppeteer.launch({ignoreHTTPSErrors: false, headless: true});
   const page = await browser.newPage();
   await page.goto('https://structurizr.com/share/' + workspaceId);
 
