@@ -29,7 +29,7 @@ if (process.argv[6] !== '*') {
   diagramKey = process.argv[6];
 }
 
-const url = 'https://structurizr.com/workspace/' + workspaceId + '/diagrams' + (diagramKey ? '#' + diagramKey : '');
+const url = 'https://structurizr.com/workspace/' + workspaceId + '/diagrams?autoLayout=false' + (diagramKey ? '#' + diagramKey : '');
 const filenameSuffix = 'structurizr-' + workspaceId + '-';
 
 (async () => {

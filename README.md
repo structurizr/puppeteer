@@ -57,4 +57,6 @@ node export-express-diagram.js png diagram1.json
 
 This will create two PNG files called ```structurizr-diagram1.png``` and ```structurizr-diagram1-key.png```, based upon the diagram definition contained in the ```diagram1.json``` file.
 
-If the JSON/YAML definition doesn't include any layouting information (x,y coordinates for elements), Structurizr will apply an auto-layout algorithm to the diagram.
+## Auto-layout
+
+By default, Structurizr will only apply an auto-layout algorithm if the diagram definition doesn't include any layouting information; i.e. there are no x,y coordinates specified for any of the elements on the diagram. To force an auto-layout algorithm, just set a query string parameter named ```autoLayout``` to ```true``` when opening the workspace diagrams or Express page. You can do this by modifying the URL used by Puppeteer in the above scripts.

@@ -26,7 +26,7 @@ if (process.argv[4] !== '*') {
   diagramKey = process.argv[4];
 }
 
-const url = 'https://structurizr.com/share/' + workspaceId + '/diagrams' + (diagramKey ? '#' + diagramKey : '');
+const url = 'https://structurizr.com/share/' + workspaceId + '/diagrams?autoLayout=false' + (diagramKey ? '#' + diagramKey : '');
 const filenameSuffix = 'structurizr-' + workspaceId + '-';
 
 (async () => {

@@ -21,7 +21,7 @@ const filenameSuffix = 'structurizr-' + filename.substring(filename.lastIndexOf(
 (async () => {
   const browser = await puppeteer.launch({ignoreHTTPSErrors: false, headless: true});
   const page = await browser.newPage();
-  await page.goto('https://structurizr.com/express');
+  await page.goto('https://structurizr.com/express?autoLayout=false');
   await page.waitForXPath("//*[name()='svg']");
 
   await page.evaluate((expressDiagramDefinition) => {
