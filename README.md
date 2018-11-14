@@ -43,7 +43,7 @@ node export-private-diagrams.js username password png 123456
 
 ## Exporting diagrams from Structurizr Express
 
-The ```export-express-diagram.js``` script will export the diagram and key from the specified Structurizr Express definition, storing the resulting PNG or SVG (HTML) files in the current directory.
+The ```export-express-diagram.js``` script will export the diagram and key from the specified Structurizr Express JSON/YAML definition, storing the resulting PNG or SVG (HTML) files in the current directory.
 
 ```
 node export-express-diagram.js <png|svg> <input filename>
