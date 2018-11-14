@@ -57,3 +57,4 @@ node export-express-diagram.js png diagram1.json
 
 This will create two PNG files called ```structurizr-diagram1.png``` and ```structurizr-diagram1-key.png```, based upon the diagram definition contained in the ```diagram1.json``` file.
 
+If the JSON/YAML definition doesn't include any layouting information (x,y coordinates for elements), Structurizr will apply an auto-layout algorithm to the diagram.
