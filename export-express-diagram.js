@@ -22,14 +22,11 @@ const filenameSuffix = 'structurizr-' + filename.substring(filename.lastIndexOf(
   const browser = await puppeteer.launch({ignoreHTTPSErrors: false, headless: true});
   const page = await browser.newPage();
   await page.goto('https://structurizr.com/express');
-
   await page.waitForXPath("//*[name()='svg']");
 
   await page.evaluate((expressDiagramDefinition) => {
-    return renderExpressDefinition(expressDiagramDefinition);
+    return structurizr.scripting.renderExpressDefinition(expressDiagramDefinition);
   }, expressDiagramDefinition);
-
-  await page.waitForFunction('isDiagramRendered() === true');
 
   if (format === 'png') {
     await exportDiagramAndKeyToPNG(page);
