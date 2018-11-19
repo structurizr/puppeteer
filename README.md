@@ -7,7 +7,11 @@ This repo contains some Node.js examples of how to script and automate parts of 
 
 See [Structurizr - Help - Scripting - Diagrams](https://structurizr.com/help/scripting-diagrams) for more details.
 
-## Exporting diagrams from a public workspace
+## Examples
+
+The command line examples that follow assume that you have Puppeteer installed. Please see [Puppeteer](https://developers.google.com/web/tools/puppeteer/) for details of how to install Puppeteer on your platform.
+
+### Exporting diagrams from a public workspace
 
 The ```export-public-diagrams.js``` script will export diagrams and keys from a public Structurizr workspace, creating a number of PNG or SVG (HTML) files in the current directory.
 
@@ -27,7 +31,7 @@ And to export a single diagram:
 node export-public-diagrams.js png 36141 SystemContext
 ```
 
-## Exporting diagrams from a private workspace
+### Exporting diagrams from a private workspace
 
 The ```export-private-diagrams.js``` script will export diagrams and keys from a private Structurizr workspace, creating a number of PNG or SVG (HTML) files in the current directory.
 
@@ -41,7 +45,7 @@ For example, to export all diagrams (and keys) from a private workspace, with ID
 node export-private-diagrams.js username password png 123456
 ```
 
-## Exporting diagrams from Structurizr Express
+### Exporting diagrams from Structurizr Express
 
 The ```export-express-diagram.js``` script will export the diagram and key from the specified Structurizr Express JSON/YAML definition, storing the resulting PNG or SVG (HTML) files in the current directory.
 
