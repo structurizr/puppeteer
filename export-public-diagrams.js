@@ -27,7 +27,7 @@ var expectedNumberOfExports = 0;
 var actualNumberOfExports = 0;
 
 const url = 'https://structurizr.com/share/' + workspaceId + '/diagrams';
-const ignoreHTTPSErrors = true;
+const ignoreHTTPSErrors = false;
 const headless = true;
 
 const filenameSuffix = 'structurizr-' + workspaceId + '-';

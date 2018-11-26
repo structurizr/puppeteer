@@ -15,7 +15,7 @@ if (format !== 'png' && format !== 'svg') {
 
 const url = 'https://structurizr.com/express';
 const autoLayout = false;
-const ignoreHTTPSErrors = true;
+const ignoreHTTPSErrors = false;
 const headless = true;
 
 const filename = process.argv[3];
