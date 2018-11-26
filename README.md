@@ -63,4 +63,4 @@ This will create two PNG files called ```structurizr-diagram1.png``` and ```stru
 
 ## Auto-layout
 
-By default, Structurizr will only apply an auto-layout algorithm if the diagram definition doesn't include any layouting information; i.e. there are no x,y coordinates specified for any of the elements on the diagram. To force an auto-layout algorithm, call the ```structurizr.scripting.setAutoLayout(bool)``` function with ```true``` or ```false``` before changing the view.
+By default, Structurizr will only apply an auto-layout algorithm if the diagram definition doesn't include any layouting information; i.e. there are no x,y coordinates specified for any of the elements on the diagram. To force an auto-layout algorithm, call the ```structurizr.scripting.setAutoLayout(bool)``` function with ```true``` or ```false``` before changing the view.  Alternatively, you can set a query string parameter named ```autoLayout``` to ```true``` when opening the workspace diagrams or Express page. You can do this by modifying the URL used by Puppeteer in the above scripts.
