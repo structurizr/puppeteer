@@ -24,12 +24,15 @@ if (!new RegExp('^[0-9]+$').test(workspaceId)) {
   console.log("Exporting diagrams and keys in workspace " + workspaceId + "...");
 }
 
-var diagramKey;
-if (process.argv[6] !== '*') {
-  diagramKey = process.argv[6];
-}
+var browser;
+var diagramKeys = [];
+var expectedNumberOfExports = 0;
+var actualNumberOfExports = 0;
 
-const url = 'https://structurizr.com/workspace/' + workspaceId + '/diagrams?autoLayout=false' + (diagramKey ? '#' + diagramKey : '');
+const url = 'https://structurizr.com/workspace/' + workspaceId + '/diagrams';
+const ignoreHTTPSErrors = false;
+const headless = true;
+
 const filenameSuffix = 'structurizr-' + workspaceId + '-';
 
 (async () => {
@@ -43,85 +46,89 @@ const filenameSuffix = 'structurizr-' + workspaceId + '-';
   await page.waitForSelector('p.dashboardMetaData');
 
   await page.goto(url);
-  await page.waitForXPath("//*[name()='svg']");
+  await page.waitForFunction('structurizr.scripting.isDiagramRendered() === true');
 
-  if (diagramKey !== undefined) {
-    if (format === 'png') {
-      await exportDiagramAndKeyToPNG(page, diagramKey);
-    } else {
-      await exportDiagramAndKeyToSVG(page, diagramKey);
+  await page.exposeFunction('savePNG', (content, filename) => {
+    console.log("Writing " + filename);
+    content = content.replace(/^data:image\/png;base64,/, "");
+    fs.writeFile(filename, content, 'base64', function (err) {
+      if (err) throw err;
+    });
+
+    actualNumberOfExports++;
+
+    if (actualNumberOfExports === expectedNumberOfExports) {
+      browser.close();
     }
+  });
+
+  // figure out which views should be exported
+  if (process.argv[6] !== undefined) {
+    diagramKeys.push(process.argv[6]);
+    expectedNumberOfExports++;
   } else {
     const views = await page.evaluate(() => {
       return structurizr.scripting.getViews();
     });
+  
+    views.forEach(function(view) {
+      diagramKeys.push(view.key);
+      expectedNumberOfExports++;
+    });
+  }
 
-    for (var i = 0; i < views.length; i++) {
-      var view = views[i];  
+  // every diagram has a key/legend
+  expectedNumberOfExports = (expectedNumberOfExports * 2);
 
-      await page.evaluate((view) => {
-        structurizr.scripting.changeView(view.key);
-      }, view);
-      await page.waitForXPath("//*[name()='svg']");
+  for (var i = 0; i < diagramKeys.length; i++) {
+    var diagramKey = diagramKeys[i];
 
-      if (format === 'png') {
-        await exportDiagramAndKeyToPNG(page, view.key);
-      } else {
-        await exportDiagramAndKeyToSVG(page, view.key);
-      }
+    await page.evaluate((diagramKey) => {
+      structurizr.scripting.changeView(diagramKey);
+    }, diagramKey);
+
+    if (format === "svg") {
+      const diagramFilename = filenameSuffix + diagramKey + '.html';
+      const diagramKeyFilename = filenameSuffix + diagramKey + '-key.html'
+
+      var svgForDiagram = await page.evaluate(() => {
+        return structurizr.scripting.exportCurrentDiagramToSVG();
+      });
+    
+      console.log("Writing " + diagramFilename);
+      fs.writeFile(diagramFilename, svgForDiagram, function (err) {
+        if (err) throw err;
+      });
+      actualNumberOfExports++;
+    
+      var svgForKey = await page.evaluate(() => {
+        return structurizr.scripting.exportCurrentDiagramKeyToSVG();
+      });
+    
+      console.log("Writing " + diagramKeyFilename);
+      fs.writeFile(diagramKeyFilename, svgForKey, function (err) {
+        if (err) throw err;
+      });
+      actualNumberOfExports++;
+    } else {
+      const diagramFilename = filenameSuffix + diagramKey + '.png';
+      const diagramKeyFilename = filenameSuffix + diagramKey + '-key.png'
+
+      page.evaluate((diagramFilename) => {
+        structurizr.scripting.exportCurrentDiagramToPNG({ crop: false }, function(png) {
+          window.savePNG(png, diagramFilename);
+        })
+      }, diagramFilename);
+
+      page.evaluate((diagramKeyFilename) => {
+        structurizr.scripting.exportCurrentDiagramKeyToPNG(function(png) {
+          window.savePNG(png, diagramKeyFilename);
+        })
+      }, diagramKeyFilename);
     }
   }
-  
-  console.log("Done");
-  await browser.close();
+    
+  if (actualNumberOfExports === expectedNumberOfExports) {
+    browser.close();
+  }
 })();
-
-async function exportDiagramAndKeyToPNG(page, diagramKey) {
-  const diagramFilename = filenameSuffix + diagramKey + '.png';
-  const diagramKeyFilename = filenameSuffix + diagramKey + '-key.png'
-
-  console.log(' - ' + diagramKey + ' (diagram) -> ' + diagramFilename);
-
-  var base64DataForDiagram = await page.evaluate(() => {
-    return structurizr.scripting.exportCurrentDiagramToPNG();
-  });
-
-  fs.writeFile(diagramFilename, base64DataForDiagram.replace(/^data:image\/png;base64,/, ""), 'base64', function (err) {
-    if (err) throw err;
-  });
-
-  console.log(' - ' + diagramKey + ' (key) -> ' + diagramKeyFilename);
-
-  var base64DataForKey = await page.evaluate(() => {
-    return structurizr.scripting.exportCurrentDiagramKeyToPNG();
-  });
-
-  fs.writeFile(diagramKeyFilename, base64DataForKey.replace(/^data:image\/png;base64,/, ""), 'base64', function (err) {
-    if (err) throw err;
-  });
-}
-
-async function exportDiagramAndKeyToSVG(page, diagramKey) {
-  const diagramFilename = filenameSuffix + diagramKey + '.html';
-  const diagramKeyFilename = filenameSuffix + diagramKey + '-key.html'
-
-  console.log(' - ' + diagramKey + ' (diagram) -> ' + diagramFilename);
-
-  var svgForDiagram = await page.evaluate(() => {
-    return structurizr.scripting.exportCurrentDiagramToSVG();
-  });
-
-  fs.writeFile(diagramFilename, svgForDiagram, function (err) {
-    if (err) throw err;
-  });
-
-  console.log(' - ' + diagramKey + ' (key) -> ' + diagramKeyFilename);
-
-  var svgForKey = await page.evaluate(() => {
-    return structurizr.scripting.exportCurrentDiagramKeyToSVG();
-  });
-
-  fs.writeFile(diagramKeyFilename, svgForKey, function (err) {
-    if (err) throw err;
-  });
-}
