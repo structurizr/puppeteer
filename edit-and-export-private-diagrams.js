@@ -87,7 +87,7 @@ const filenameSuffix = 'structurizr-' + workspaceId + '-';
   await page.exposeFunction('workspaceSaved', workspaceSaved);
   
   await page.evaluate(() => {
-    return structurizr.scripting.registerWorkspaceSavedCallback(workspaceSaved);
+    return structurizr.scripting.onWorkspaceSaved(workspaceSaved);
   });
 })();
 
