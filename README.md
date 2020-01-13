@@ -45,22 +45,6 @@ For example, to export all diagrams (and keys) from a private workspace, with ID
 node export-private-diagrams.js username password png 123456
 ```
 
-### Exporting diagrams from Structurizr Express
-
-The ```export-express-diagram.js``` script will export the diagram and key from the specified Structurizr Express JSON/YAML definition, storing the resulting PNG or SVG (HTML) files in the current directory.
-
-```
-node export-express-diagram.js <png|svg> <input filename>
-```
-
-For example:
-
-```
-node export-express-diagram.js png diagram1.json
-```
-
-This will create two PNG files called ```structurizr-diagram1.png``` and ```structurizr-diagram1-key.png```, based upon the diagram definition contained in the ```diagram1.json``` file.
-
 ## Auto-layout
 
 By default, Structurizr will only apply an auto-layout algorithm if the diagram definition doesn't include any layouting information; i.e. there are no x,y coordinates specified for any of the elements on the diagram. To force an auto-layout algorithm, call the ```structurizr.scripting.setAutoLayout(bool)``` function with ```true``` or ```false``` before changing the view.  Alternatively, you can set a query string parameter named ```autoLayout``` to ```true``` when opening the workspace diagrams or Express page. You can do this by modifying the URL used by Puppeteer in the above scripts.
