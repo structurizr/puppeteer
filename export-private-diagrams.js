@@ -1,22 +1,23 @@
 const puppeteer = require('puppeteer');
 const fs = require('fs');
 
-if (process.argv.length < 6) {
-  console.log("Please specify a username, password, output format (PNG or SVG), workspace ID, and optional diagram key.");
-  console.log("Usage: <username> <password> <png|svg> <workspaceId> [diagramKey]")
+if (process.argv.length < 7) {
+  console.log("Please specify a Structurizr URL, username, password, output format (PNG or SVG), workspace ID, and optional diagram key.");
+  console.log("Usage: <structurizrUrl> <username> <password> <png|svg> <workspaceId> [diagramKey]")
   process.exit(1);
 }
 
-const username = process.argv[2];
-const password = process.argv[3];
+const structurizrUrl = process.argv[2];
+const username = process.argv[3];
+const password = process.argv[4];
 
-const format = process.argv[4];
+const format = process.argv[5];
 if (format !== 'png' && format !== 'svg') {
   console.log("The output format must be png or svg.");
   process.exit(1);
 }
 
-const workspaceId = process.argv[5];
+const workspaceId = process.argv[6];
 if (!new RegExp('^[0-9]+$').test(workspaceId)) {
   console.log("The workspace ID must be a non-negative integer.");
   process.exit(1);
@@ -29,23 +30,23 @@ var diagramKeys = [];
 var expectedNumberOfExports = 0;
 var actualNumberOfExports = 0;
 
-const url = 'https://structurizr.com/workspace/' + workspaceId + '/diagrams';
+const url = structurizrUrl + '/workspace/' + workspaceId + '/diagrams';
 const ignoreHTTPSErrors = false;
 const headless = true;
 
 const filenameSuffix = 'structurizr-' + workspaceId + '-';
 
 (async () => {
-  const browser = await puppeteer.launch({ignoreHTTPSErrors: false, headless: true});
+  const browser = await puppeteer.launch({ignoreHTTPSErrors: true, headless: true});
   const page = await browser.newPage();
 
-  await page.goto('https://structurizr.com/dashboard');
+  await page.goto(structurizrUrl + '/dashboard');
   await page.type('#username', username);
   await page.type('#password', password);
   await page.click('button[type="submit"]');
   await page.waitForSelector('p.dashboardMetaData');
 
-  await page.goto(url);
+  await page.goto(url, { waitUntil: 'domcontentloaded' });
   await page.waitForFunction('structurizr.scripting.isDiagramRendered() === true');
 
   await page.exposeFunction('savePNG', (content, filename) => {
@@ -63,8 +64,8 @@ const filenameSuffix = 'structurizr-' + workspaceId + '-';
   });
 
   // figure out which views should be exported
-  if (process.argv[6] !== undefined) {
-    diagramKeys.push(process.argv[6]);
+  if (process.argv[7] !== undefined) {
+    diagramKeys.push(process.argv[7]);
     expectedNumberOfExports++;
   } else {
     const views = await page.evaluate(() => {

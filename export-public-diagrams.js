@@ -1,19 +1,21 @@
 const puppeteer = require('puppeteer');
 const fs = require('fs');
 
-if (process.argv.length < 4) {
-  console.log("Please specify an output format (PNG or SVG), workspace ID, and optional diagram key.");
-  console.log("Usage: <png|svg> <workspace ID> [diagram key]")
+if (process.argv.length < 5) {
+  console.log("Please specify a Structurizr URL, output format (PNG or SVG), workspace ID, and optional diagram key.");
+  console.log("Usage: <structurizrUrl> <png|svg> <workspace ID> [diagram key]")
   process.exit(1);
 }
 
-const format = process.argv[2];
+const structurizrUrl = process.argv[2];
+
+const format = process.argv[3];
 if (format !== 'png' && format !== 'svg') {
   console.log("The output format must be png or svg.");
   process.exit(1);
 }
 
-const workspaceId = process.argv[3];
+const workspaceId = process.argv[4];
 if (!new RegExp('^[0-9]+$').test(workspaceId)) {
   console.log("The workspace ID must be a non-negative integer.");
   process.exit(1);
@@ -26,16 +28,15 @@ var diagramKeys = [];
 var expectedNumberOfExports = 0;
 var actualNumberOfExports = 0;
 
-const url = 'https://structurizr.com/share/' + workspaceId + '/diagrams';
-const ignoreHTTPSErrors = false;
-const headless = true;
+const url = structurizrUrl + '/share/' + workspaceId + '/diagrams';
 
 const filenameSuffix = 'structurizr-' + workspaceId + '-';
 
 (async () => {
-  browser = await puppeteer.launch({ignoreHTTPSErrors: ignoreHTTPSErrors, headless: headless});  
+  browser = await puppeteer.launch({ignoreHTTPSErrors: false, headless: true});  
   const page = await browser.newPage();
-  await page.goto(url);
+
+  await page.goto(url, { waitUntil: 'domcontentloaded' });
   await page.waitForFunction('structurizr.scripting.isDiagramRendered() === true');
 
   await page.exposeFunction('savePNG', (content, filename) => {
@@ -53,8 +54,8 @@ const filenameSuffix = 'structurizr-' + workspaceId + '-';
   });
 
   // figure out which views should be exported
-  if (process.argv[4] !== undefined) {
-    diagramKeys.push(process.argv[4]);
+  if (process.argv[5] !== undefined) {
+    diagramKeys.push(process.argv[5]);
     expectedNumberOfExports++;
   } else {
     const views = await page.evaluate(() => {
