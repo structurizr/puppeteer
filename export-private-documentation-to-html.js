@@ -37,7 +37,7 @@ console.log(url);
 
   console.log("Opening documentation in workspace " + workspaceId + "...");
 
-  await page.goto(url, { waitUntil: 'domcontentloaded' });
+  await page.goto(url, { waitUntil: 'load' });
 
   await page.exposeFunction('saveHtml', (content) => {
     const filename = 'structurizr-' + workspaceId + '-documentation.html';
