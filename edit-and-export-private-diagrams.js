@@ -47,7 +47,7 @@ const filenameSuffix = 'structurizr-' + workspaceId + '-';
   await page.type('#username', username);
   await page.type('#password', password);
   await page.click('button[type="submit"]');
-  await page.waitForSelector('p.dashboardMetaData');
+  await page.waitForSelector('p.workspaceMetaData');
 
   await page.goto(url);
   await page.waitForXPath("//*[name()='svg']");
