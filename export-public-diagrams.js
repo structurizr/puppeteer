@@ -78,9 +78,11 @@ const filenameSuffix = 'structurizr-' + workspaceId + '-';
       structurizr.scripting.changeView(diagramKey);
     }, diagramKey);
 
+    await page.waitForFunction('structurizr.scripting.isDiagramRendered() === true');
+
     if (format === "svg") {
-      const diagramFilename = filenameSuffix + diagramKey + '.html';
-      const diagramKeyFilename = filenameSuffix + diagramKey + '-key.html'
+      const diagramFilename = filenameSuffix + diagramKey + '.svg';
+      const diagramKeyFilename = filenameSuffix + diagramKey + '-key.svg'
 
       var svgForDiagram = await page.evaluate(() => {
         return structurizr.scripting.exportCurrentDiagramToSVG();

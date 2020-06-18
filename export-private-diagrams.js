@@ -44,7 +44,7 @@ const filenameSuffix = 'structurizr-' + workspaceId + '-';
   await page.type('#username', username);
   await page.type('#password', password);
   await page.click('button[type="submit"]');
-  await page.waitForSelector('p.dashboardMetaData');
+  await page.waitForSelector('div.dashboardMetaData');
 
   await page.goto(url, { waitUntil: 'domcontentloaded' });
   await page.waitForFunction('structurizr.scripting.isDiagramRendered() === true');
@@ -88,9 +88,11 @@ const filenameSuffix = 'structurizr-' + workspaceId + '-';
       structurizr.scripting.changeView(diagramKey);
     }, diagramKey);
 
+    await page.waitForFunction('structurizr.scripting.isDiagramRendered() === true');
+
     if (format === "svg") {
-      const diagramFilename = filenameSuffix + diagramKey + '.html';
-      const diagramKeyFilename = filenameSuffix + diagramKey + '-key.html'
+      const diagramFilename = filenameSuffix + diagramKey + '.svg';
+      const diagramKeyFilename = filenameSuffix + diagramKey + '-key.svg'
 
       var svgForDiagram = await page.evaluate(() => {
         return structurizr.scripting.exportCurrentDiagramToSVG();
