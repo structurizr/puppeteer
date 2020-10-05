@@ -40,10 +40,10 @@ const filenameSuffix = 'structurizr-' + workspaceId + '-';
   const browser = await puppeteer.launch({ignoreHTTPSErrors: true, headless: true});
   const page = await browser.newPage();
 
-  await page.goto(structurizrUrl + '/dashboard');
+  await page.goto(structurizrUrl + '/dashboard', { waitUntil: 'networkidle2' });
   await page.type('#username', username);
   await page.type('#password', password);
-  await page.click('button[type="submit"]');
+  await page.keyboard.press('Enter');
   await page.waitForSelector('div.dashboardMetaData');
 
   await page.goto(url, { waitUntil: 'domcontentloaded' });

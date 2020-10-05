@@ -25,11 +25,11 @@ const url = structurizrUrl + '/workspace/' + workspaceId + '/diagrams';
 
   console.log("Signing in...");
 
-  await page.goto(structurizrUrl + '/dashboard');
+  await page.goto(structurizrUrl + '/dashboard', { waitUntil: 'networkidle2' });
   await page.type('#username', username);
   await page.type('#password', password);
-  await page.click('button[type="submit"]');
-  await page.waitForSelector('#searchForm');
+  await page.keyboard.press('Enter');
+  await page.waitForSelector('div.dashboardMetaData');
 
   console.log("Opening diagrams in workspace " + workspaceId + "...");
 
