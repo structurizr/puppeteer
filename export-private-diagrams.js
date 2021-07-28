@@ -31,20 +31,20 @@ var expectedNumberOfExports = 0;
 var actualNumberOfExports = 0;
 
 const url = structurizrUrl + '/workspace/' + workspaceId + '/diagrams';
-const ignoreHTTPSErrors = false;
+const ignoreHTTPSErrors = true;
 const headless = true;
 
 const filenameSuffix = 'structurizr-' + workspaceId + '-';
 
 (async () => {
-  const browser = await puppeteer.launch({ignoreHTTPSErrors: true, headless: true});
+  const browser = await puppeteer.launch({ignoreHTTPSErrors, headless});
   const page = await browser.newPage();
 
   await page.goto(structurizrUrl + '/dashboard', { waitUntil: 'networkidle2' });
   await page.type('#username', username);
   await page.type('#password', password);
   await page.keyboard.press('Enter');
-  await page.waitForSelector('div.dashboardMetaData');
+  await page.waitForSelector('div.workspaceThumbnail');
 
   await page.goto(url, { waitUntil: 'domcontentloaded' });
   await page.waitForFunction('structurizr.scripting.isDiagramRendered() === true');
