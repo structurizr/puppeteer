@@ -1,9 +1,9 @@
 const puppeteer = require('puppeteer');
 const fs = require('fs');
 
-if (process.argv.length < 7) {
+if (process.argv.length < 6) {
   console.log("Please specify a Structurizr URL, username, password, workspace ID, and software system name.");
-  console.log("Usage: <structurizrUrl> <username> <password> <workspaceId> <softwareSystemName>")
+  console.log("Usage: <structurizrUrl> <username> <password> <workspaceId> [softwareSystemName]")
   process.exit(1);
 }
 
@@ -17,31 +17,34 @@ if (!new RegExp('^[0-9]+$').test(workspaceId)) {
   process.exit(1);
 }
 
-const softwareSystemName = process.argv[6];
+var softwareSystemName = "";
 
-const url = structurizrUrl + '/workspace/' + workspaceId + '/documentation#%2F' + softwareSystemName + ':All';
+if (process.argv.length === 7) {
+  softwareSystemName = process.argv[6];
+}
 
-console.log(url);
+const url = structurizrUrl + '/workspace/' + workspaceId + '/documentation/' + softwareSystemName;
 
 (async () => {
   const browser = await puppeteer.launch({ignoreHTTPSErrors: true, headless: true});
   const page = await browser.newPage();
 
-  console.log("Signing in...");
+  console.log("Signing in at " + structurizrUrl);
 
-  await page.goto(structurizrUrl + '/dashboard');
+  await page.goto(structurizrUrl + '/dashboard', { waitUntil: 'networkidle2' });
   await page.type('#username', username);
   await page.type('#password', password);
-  await page.click('button[type="submit"]');
-  await page.waitForSelector('#searchForm');
+  await page.keyboard.press('Enter');
+  await page.waitForSelector('div#dashboard');
 
-  console.log("Opening documentation in workspace " + workspaceId + "...");
+  console.log("Opening documentation at " + url);
 
   await page.goto(url, { waitUntil: 'load' });
+  await page.waitForFunction('structurizr && structurizr.scripting && structurizr.scripting.isDocumentationRendered() === true');
 
   await page.exposeFunction('saveHtml', (content) => {
     const filename = 'structurizr-' + workspaceId + '-documentation.html';
-    console.log("Writing " + filename);
+    console.log("Writing documentation to " + filename);
     fs.writeFile(filename, content, 'utf8', function (err) {
       if (err) throw err;
     });
@@ -49,7 +52,7 @@ console.log(url);
     browser.close();
   });
 
-  console.log("Exporting documentation as offline HTML page...");
+  console.log("Exporting documentation as offline HTML page");
   await exportDocumentation(page);
 })();
 
