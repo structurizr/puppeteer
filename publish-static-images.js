@@ -28,7 +28,7 @@ const url = structurizrUrl + '/workspace/' + workspaceId + '/diagram-editor';
   await page.type('#username', username);
   await page.type('#password', password);
   await page.click('button[type="submit"]');
-  await page.waitForSelector('#searchForm');
+  await page.waitForSelector('div#dashboard');
 
   console.log("Opening diagrams in workspace " + workspaceId + "...");
 
