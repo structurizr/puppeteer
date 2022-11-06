@@ -29,7 +29,7 @@ const url = structurizrUrl + '/workspace/' + workspaceId + '/diagrams';
   await page.type('#username', username);
   await page.type('#password', password);
   await page.keyboard.press('Enter');
-  await page.waitForSelector('div.dashboardMetaData');
+  await page.waitForSelector('div#dashboard');
 
   console.log("Opening diagrams in workspace " + workspaceId + "...");
 

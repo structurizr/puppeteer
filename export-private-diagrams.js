@@ -44,7 +44,7 @@ const filenameSuffix = 'structurizr-' + workspaceId + '-';
   await page.type('#username', username);
   await page.type('#password', password);
   await page.keyboard.press('Enter');
-  await page.waitForSelector('div.workspaceThumbnail');
+  await page.waitForSelector('div#dashboard');
 
   await page.goto(url, { waitUntil: 'domcontentloaded' });
   await page.waitForFunction('structurizr.scripting.isDiagramRendered() === true');
