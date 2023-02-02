@@ -1,15 +1,25 @@
 # Structurizr Puppeteer
 
-This repo contains some Node.js examples of how to script and automate parts of the Structurizr web application using Puppeteer (and headless Chrome) from the command line, perhaps as a part of your build process. Examples of what you can do include:
-
-- Export diagrams and keys to PNG or SVG formats.
-- Export all diagrams to a single HTML page for offline use. 
+This repo contains some Node.js examples of how to script and automate parts of Structurizr Lite/on-premises/cloud service using Puppeteer (and headless Chrome) from the command line, perhaps as a part of your build process. The typical use case is to export diagrams to PNG or SVG formats.
 
 See [Structurizr - Help - Scripting - Diagrams](https://structurizr.com/help/scripting-diagrams) for more details.
 
-## Examples
-
 The command line examples that follow assume that you have Puppeteer installed. Please see [Puppeteer](https://developers.google.com/web/tools/puppeteer/) for details of how to install Puppeteer on your platform.
+
+## Structurizr Lite
+
+```
+node lite/export-diagrams-png.js [Structurizr Lite URL] [diagram key]
+node lite/export-diagrams-svg.js [Structurizr Lite URL] [diagram key]
+```
+
+For example, to export all diagrams to PNG format from Structurizr Lite running on `http://localhost:8080`:
+
+```
+node lite/export-diagrams-png.js http://localhost:8080
+```
+
+## Structurizr cloud service/on-premises installation
 
 ### Exporting diagrams from a public workspace
 
