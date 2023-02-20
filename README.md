@@ -2,7 +2,7 @@
 
 This repo contains some Node.js examples of how to script and automate parts of Structurizr Lite/on-premises/cloud service using Puppeteer (and headless Chrome) from the command line, perhaps as a part of your build process.
 
-The command line examples that follow assume that you have Puppeteer installed. Please see [Puppeteer](https://developers.google.com/web/tools/puppeteer/) for details of how to install Puppeteer on your platform.
+The command line examples that follow assume that you have [Node.js](https://nodejs.org) and [Puppeteer](https://developers.google.com/web/tools/puppeteer/) installed.
 
 ## Exporting diagrams
 
