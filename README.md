@@ -1,56 +1,58 @@
 # Structurizr Puppeteer
 
-This repo contains some Node.js examples of how to script and automate parts of Structurizr Lite/on-premises/cloud service using Puppeteer (and headless Chrome) from the command line, perhaps as a part of your build process. The typical use case is to export diagrams to PNG or SVG formats.
-
+This repo contains some Node.js examples of how to script and automate parts of Structurizr Lite/on-premises/cloud service using Puppeteer (and headless Chrome) from the command line, perhaps as a part of your build process.
 See [Structurizr - Help - Scripting - Diagrams](https://structurizr.com/help/scripting-diagrams) for more details.
 
 The command line examples that follow assume that you have Puppeteer installed. Please see [Puppeteer](https://developers.google.com/web/tools/puppeteer/) for details of how to install Puppeteer on your platform.
 
-## Structurizr Lite
+## Exporting diagrams
 
 ```
-node lite/export-diagrams-png.js [Structurizr Lite URL] [diagram key]
-node lite/export-diagrams-svg.js [Structurizr Lite URL] [diagram key]
+node export-diagrams.js <diagram page URL> <png|svg> [username] [password]
 ```
 
-For example, to export all diagrams to PNG format from Structurizr Lite running on `http://localhost:8080`:
+### Examples
+
+Structurizr Lite:
 
 ```
-node lite/export-diagrams-png.js http://localhost:8080
+node export-diagrams.js http://localhost:8080/workspace/diagrams png
 ```
 
-## Structurizr cloud service/on-premises installation
-
-### Exporting diagrams from a public workspace
-
-The ```export-public-diagrams.js``` script will export diagrams and keys from a public Structurizr workspace, creating a number of PNG or SVG (HTML) files in the current directory.
+Unauthenticated access to diagrams on the cloud service:
 
 ```
-node export-public-diagrams.js <structurizrUrl> <png|svg> <workspace ID> [diagram key]
+node export-diagrams.js https://structurizr.com/share/36141/diagrams png
 ```
 
-For example, to export all diagrams (and keys) from the [Big Bank plc example workspace](https://structurizr.com/share/36141/diagrams):
+Authenticated access to diagrams on an on-premises installation
 
 ```
-node export-public-diagrams.js https://structurizr.com png 36141
+node export-diagrams.js http://localhost:8080/workspace/1/diagrams png username password
 ```
 
-And to export a single diagram:
+## Exporting documentation
 
 ```
-node export-public-diagrams.js https://structurizr.com png 36141 SystemContext
+node export-documentation.js <documentation page URL> [username] [password]
 ```
 
-### Exporting diagrams from a private workspace
+### Examples
 
-The ```export-private-diagrams.js``` script will export diagrams and keys from a private Structurizr workspace (on the cloud service), creating a number of PNG or SVG (HTML) files in the current directory.
-
-```
-node export-private-diagrams.js <structurizrUrl> <username> <password> <png|svg> <workspaceId> [diagramKey]
-```
-
-For example, to export all diagrams (and keys) from a private workspace, with ID ```123456```:
+Structurizr Lite (workspace or default documentation):
 
 ```
-node export-private-diagrams.js https://structurizr.com username password png 123456
+node export-documentation.js http://localhost:8080/workspace/documentation
+```
+
+Unauthenticated access to documentation on the cloud service (specific software system documentation):
+
+```
+node export-documentation.js https://structurizr.com/share/31/documentation/Financial%20Risk%20System
+```
+
+Authenticated access to documentation on an on-premises installation (workspace or default documentation):
+
+```
+node export-documentation.js http://localhost:8080/workspace/1/documentation username password
 ```
