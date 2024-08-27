@@ -1,7 +1,7 @@
 const puppeteer = require('puppeteer');
 const fs = require('fs');
 
-const FILENAME_SUFFIX = '';
+const FILENAME_PREFIX = '';
 
 const IGNORE_HTTPS_ERRORS = true;
 const HEADLESS = true;
@@ -44,7 +44,7 @@ if (process.argv.length > 2) {
   await page.waitForFunction('structurizr.scripting && structurizr.scripting.isDocumentationRendered() === true');
 
   await page.exposeFunction('saveHtml', (content) => {
-    const filename = FILENAME_SUFFIX + 'documentation.html';
+    const filename = FILENAME_PREFIX + 'documentation.html';
     console.log(" - Writing " + filename);
     fs.writeFile(filename, content, 'utf8', function (err) {
       if (err) throw err;
