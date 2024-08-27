@@ -1,7 +1,7 @@
 const puppeteer = require('puppeteer');
 const fs = require('fs');
 
-const FILENAME_SUFFIX = '';
+const FILENAME_PREFIX = '';
 
 const PNG_FORMAT = 'png';
 const SVG_FORMAT = 'svg';
@@ -100,8 +100,8 @@ var actualNumberOfExports = 0;
     await page.waitForFunction('structurizr.scripting.isDiagramRendered() === true');
 
     if (format === SVG_FORMAT) {
-      const diagramFilename = FILENAME_SUFFIX + view.key + '.svg';
-      const diagramKeyFilename = FILENAME_SUFFIX + view.key + '-key.svg'
+      const diagramFilename = FILENAME_PREFIX + view.key + '.svg';
+      const diagramKeyFilename = FILENAME_PREFIX + view.key + '-key.svg'
 
       var svgForDiagram = await page.evaluate(() => {
         return structurizr.scripting.exportCurrentDiagramToSVG({ includeMetadata: true });
@@ -130,8 +130,8 @@ var actualNumberOfExports = 0;
         browser.close();
       }    
     } else {
-      const diagramFilename = FILENAME_SUFFIX + view.key + '.png';
-      const diagramKeyFilename = FILENAME_SUFFIX + view.key + '-key.png'
+      const diagramFilename = FILENAME_PREFIX + view.key + '.png';
+      const diagramKeyFilename = FILENAME_PREFIX + view.key + '-key.png'
 
       page.evaluate((diagramFilename) => {
         structurizr.scripting.exportCurrentDiagramToPNG({ includeMetadata: true, crop: false }, function(png) {
