@@ -1,8 +1,6 @@
 const puppeteer = require('puppeteer');
 const fs = require('fs');
 
-const FILENAME_SUFFIX = '';
-
 const PNG_FORMAT = 'png';
 const SVG_FORMAT = 'svg';
 
@@ -100,8 +98,8 @@ var actualNumberOfExports = 0;
     await page.waitForFunction('structurizr.scripting.isDiagramRendered() === true');
 
     if (format === SVG_FORMAT) {
-      const diagramFilename = FILENAME_SUFFIX + view.key + '.svg';
-      const diagramKeyFilename = FILENAME_SUFFIX + view.key + '-key.svg'
+      const diagramFilename = view.key + '.svg';
+      const diagramKeyFilename = view.key + '-key.svg'
 
       var svgForDiagram = await page.evaluate(() => {
         return structurizr.scripting.exportCurrentDiagramToSVG({ includeMetadata: true });
