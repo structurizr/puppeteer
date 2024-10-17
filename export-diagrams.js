@@ -128,8 +128,8 @@ var actualNumberOfExports = 0;
         browser.close();
       }    
     } else {
-      const diagramFilename = FILENAME_SUFFIX + view.key + '.png';
-      const diagramKeyFilename = FILENAME_SUFFIX + view.key + '-key.png'
+      const diagramFilename = view.key + '.png';
+      const diagramKeyFilename = view.key + '-key.png'
 
       page.evaluate((diagramFilename) => {
         structurizr.scripting.exportCurrentDiagramToPNG({ includeMetadata: true, crop: false }, function(png) {
