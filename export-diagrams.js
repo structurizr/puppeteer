@@ -34,7 +34,7 @@ var expectedNumberOfExports = 0;
 var actualNumberOfExports = 0;
 
 (async () => {
-  const browser = await puppeteer.launch({ignoreHTTPSErrors: IGNORE_HTTPS_ERRORS, headless: HEADLESS});
+  const browser = await puppeteer.launch({acceptInsecureCerts: IGNORE_HTTPS_ERRORS, headless: HEADLESS});
   const page = await browser.newPage();
 
   if (username !== undefined && password !== undefined) {
