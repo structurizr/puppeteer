@@ -30,8 +30,51 @@ if (process.argv.length > 3) {
   password = process.argv[5];
 }
 
-var expectedNumberOfExports = 0;
-var actualNumberOfExports = 0;
+async function exportDiagram(page, view, exportKeys, stepSuffix = '') {
+  await page.waitForFunction('structurizr.scripting.isDiagramRendered() === true');
+
+  if (format === SVG_FORMAT) {
+    const diagramFilename = view.key + stepSuffix + '.svg';
+    const diagramKeyFilename = view.key + stepSuffix + '-key.svg'
+
+    var svgForDiagram = await page.evaluate(() => {
+      return structurizr.scripting.exportCurrentDiagramToSVG({ includeMetadata: true });
+    });
+
+    console.log(" - " + diagramFilename);
+    fs.writeFile(diagramFilename, svgForDiagram, function (err) {
+      if (err) throw err;
+    });
+
+    if (exportKeys && view.type !== IMAGE_VIEW_TYPE) {
+      var svgForKey = await page.evaluate(() => {
+        return structurizr.scripting.exportCurrentDiagramKeyToSVG();
+      });
+
+      console.log(" - " + diagramKeyFilename);
+      fs.writeFile(diagramKeyFilename, svgForKey, function (err) {
+        if (err) throw err;
+      });
+    }
+  } else {
+    const diagramFilename = view.key + stepSuffix + '.png';
+    const diagramKeyFilename = view.key + stepSuffix + '-key.png'
+
+    await page.evaluate((diagramFilename) => {
+      structurizr.scripting.exportCurrentDiagramToPNG({ includeMetadata: true, crop: false }, function(png) {
+        window.savePNG(png, diagramFilename);
+      })
+    }, diagramFilename);
+
+    if (exportKeys && view.type !== IMAGE_VIEW_TYPE) {
+      await page.evaluate((diagramKeyFilename) => {
+        structurizr.scripting.exportCurrentDiagramKeyToPNG(function(png) {
+          window.savePNG(png, diagramKeyFilename);
+        })
+      }, diagramKeyFilename);
+    }
+  }
+}
 
 (async () => {
   const browser = await puppeteer.launch({ignoreHTTPSErrors: IGNORE_HTTPS_ERRORS, headless: HEADLESS});
@@ -63,28 +106,12 @@ var actualNumberOfExports = 0;
       fs.writeFile(filename, content, 'base64', function (err) {
         if (err) throw err;
       });
-      
-      actualNumberOfExports++;
-
-      if (actualNumberOfExports === expectedNumberOfExports) {
-        console.log(" - Finished");
-        browser.close();
-      }
     });
   }
 
   // get the array of views
   const views = await page.evaluate(() => {
     return structurizr.scripting.getViews();
-  });
-
-  views.forEach(function(view) {
-    if (view.type === IMAGE_VIEW_TYPE) {
-      expectedNumberOfExports++; // diagram only
-    } else {
-      expectedNumberOfExports++; // diagram
-      expectedNumberOfExports++; // key
-    }
   });
 
   console.log(" - Starting export");
@@ -95,56 +122,28 @@ var actualNumberOfExports = 0;
       structurizr.scripting.changeView(view.key);
     }, view);
 
-    await page.waitForFunction('structurizr.scripting.isDiagramRendered() === true');
+    await exportDiagram(page, view, true, undefined);
 
-    if (format === SVG_FORMAT) {
-      const diagramFilename = view.key + '.svg';
-      const diagramKeyFilename = view.key + '-key.svg'
+    var currentViewIsDynamic = await page.evaluate(() => {
+      return structurizr.diagram.currentViewIsDynamic();
+    });
 
-      var svgForDiagram = await page.evaluate(() => {
-        return structurizr.scripting.exportCurrentDiagramToSVG({ includeMetadata: true });
+    if (currentViewIsDynamic) {
+      await page.evaluate(() => {
+        structurizr.diagram.stepForwardInAnimation();
       });
-    
-      console.log(" - " + diagramFilename);
-      fs.writeFile(diagramFilename, svgForDiagram, function (err) {
-        if (err) throw err;
-      });
-      actualNumberOfExports++;
-    
-      if (view.type !== IMAGE_VIEW_TYPE) {
-        var svgForKey = await page.evaluate(() => {
-          return structurizr.scripting.exportCurrentDiagramKeyToSVG();
+
+      var step = 1;
+      while (await page.evaluate(() => structurizr.diagram.animationStarted())) {
+        await exportDiagram(page, view, false, '-step-' + step);
+        await page.evaluate(() => {
+          structurizr.diagram.stepForwardInAnimation();
         });
-      
-        console.log(" - " + diagramKeyFilename);
-        fs.writeFile(diagramKeyFilename, svgForKey, function (err) {
-          if (err) throw err;
-        });
-        actualNumberOfExports++;
-      }
-
-      if (actualNumberOfExports === expectedNumberOfExports) {
-        console.log(" - Finished");
-        browser.close();
-      }    
-    } else {
-      const diagramFilename = view.key + '.png';
-      const diagramKeyFilename = view.key + '-key.png'
-
-      page.evaluate((diagramFilename) => {
-        structurizr.scripting.exportCurrentDiagramToPNG({ includeMetadata: true, crop: false }, function(png) {
-          window.savePNG(png, diagramFilename);
-        })
-      }, diagramFilename);
-
-      if (view.type !== IMAGE_VIEW_TYPE) {
-        page.evaluate((diagramKeyFilename) => {
-          structurizr.scripting.exportCurrentDiagramKeyToPNG(function(png) {
-            window.savePNG(png, diagramKeyFilename);
-          })
-        }, diagramKeyFilename);
+        step++;
       }
     }
   }
 
+  console.log(" - Finished");
+  browser.close();
 })();
