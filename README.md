@@ -1,4 +1,4 @@
-> Using the new consolidated tooling? See the new [export](https://docs.structurizr.com/export) command for details of how to export PNG/SVG images.
+> These scripts are not compatible with the new consolidated tooling - see [export](https://docs.structurizr.com/export) for details of how to export PNG/SVG images.
 
 # Structurizr Puppeteer
 
