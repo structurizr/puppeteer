@@ -1,3 +1,5 @@
+> Using the new consolidated tooling? See the new [export](https://docs.structurizr.com/export) command for details of how to export PNG/SVG images.
+
 # Structurizr Puppeteer
 
 This repo contains some Node.js examples of how to script and automate parts of Structurizr Lite/on-premises/cloud service using Puppeteer (and headless Chrome) from the command line, perhaps as a part of your build process.
